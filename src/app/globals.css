@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-roboto;
+}
+
+.text-shadow-orange {
+  text-shadow: 1px 1px 2px rgb(122, 79, 1);
+}
+
+.text-outline-black {
+  -webkit-text-stroke-width: 0.3px;
+  -webkit-text-stroke-color: white;
+}

@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  user
+  rider
+  driver
+  admin
+	@@map("UserRole")
+}
+
+enum RideStatus {
+  PENDING
+  ACCEPTED
+  COMPLETED
+  CANCELLED
+}
+
+model Car {
+  id            String  @id @default(cuid())
+  licensePlate  String
+  className     String
+  name          String
+  modelBrand    String?
+  modelYear     String?
+  modelColor    String?
+  seats         Int?
+  userId        String
+  user          User    @relation("UserCars", fields: [userId], references: [id])
+  rides         Ride[]  @relation
+}
+
+model User {
+  id        String         @id @default(uuid())
+  name      String         @db.VarChar(255)
+  email     String         @unique
+  avatar    String?        @default("https://hpkzbmlrxymktodrtnsx.supabase.co/storage/v1/object/public/tl-goober/anon.png")
+  phone     String?
+  verified  Boolean?       @default(false)
+  password  String
+  role      UserRole?  @default(user)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  provider  String?        @default("local")
+  cars      Car[]    @relation("UserCars")
+  rides     Ride[]   @relation("UserRides")
+  driverRides Ride[] @relation("DriverRides")
+}
+
+model Ride {
+  id          String    @id @default(cuid())
+  pickupId    String
+  dropoffId   String
+  riderId     String
+  driverId    String?
+  carId       String?
+  fare        Float
+  status      RideStatus @default(PENDING)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  price       Float
+  pickup      Location  @relation("PickupLocation", fields: [pickupId], references: [id])
+  dropoff     Location  @relation("DropoffLocation", fields: [dropoffId], references: [id])
+  rider       User      @relation("UserRides", fields: [riderId], references: [id])
+  driver      User?     @relation("DriverRides", fields: [driverId], references: [id])
+  car         Car?      @relation(fields: [carId], references: [id])
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  latitude  Float
+  longitude Float
+  ridesAsPickup   Ride[] @relation("PickupLocation")
+  ridesAsDropoff  Ride[] @relation("DropoffLocation")
+}

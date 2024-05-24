@@ -1,0 +1,18 @@
+@keyframes moveBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 150% 0;
+  }
+}
+
+.movingPatternTaxi {
+  background: url('../../assets/images/patternTaxi.png') repeat-x;
+  background-size: 150% auto;
+  animation: moveBackground 30s linear infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.8;
+}
